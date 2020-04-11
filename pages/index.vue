@@ -51,8 +51,4 @@ export default {
   &__add
     width: 100%
     margin-bottom: 150px
-input
-  border: none
-  &:focus
-    outline: none
 </style>

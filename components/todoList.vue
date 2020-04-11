@@ -1,13 +1,14 @@
 <template>
 	<div class="t-list">
 		<div class="t-list__head">
-			<input class="t-list__headline" :value="data.headline" readonly>
+			<input class="t-list__headline" :readonly="isMainPage" :value="data.headline" ref="headline">
 			<div class="t-list__controls">
-				<button class="t-list__button" @click="deleteTodoList">Удалить</button>
-				<button class="t-list__button">Изменить</button>
+				<nuxt-link v-if="isMainPage" :to="`change/${data.id}`" class="t-list__button button">Изменить</nuxt-link>
+				<button class="t-list__button button button_delete" v-if="isMainPage" @click="deleteTodoList">Удалить</button>
+				<button class="t-list__button button button_safe" v-if="!isMainPage" @click="safeTodoList">Сохранить</button>
 			</div>
 		</div>
-		<div class="t-list__add">
+		<div class="t-list__add" v-if="!isMainPage">
 			<add-item :settings="addTodoSettings" @add-todo="addTodo"></add-item>
 		</div>
 		<div class="t-list__box">
@@ -23,7 +24,7 @@ export default {
 	props: {
 		data: {
 			type: Object,
-			required: true
+			required: false
 		}
 	},
 	components: {
@@ -31,10 +32,12 @@ export default {
 	},
 	data() {
 		return {
+			isMainPage: this.$route.path === '/',
 			addTodoSettings: {
 				placeholder: 'Добавить задачу',
 				action: 'add-todo'
-			}
+			},
+			todos: []
 		}
 	},
 	methods: {
@@ -45,9 +48,19 @@ export default {
 			}
 			
 			this.$store.dispatch('todoLists/addTodoInList', [this.data.id, newTodo])
+			// this.todos.unshift(newTodo)
+			// console.log(newTodo)
 		},
 		deleteTodoList() {
 			this.$store.dispatch('todoLists/deleteTodoList', this.data.id)
+		},
+		safeTodoList() {
+			const newList = {
+				id: this.data.id,
+				headline: this.$refs.headline.value,
+				todos: this.data.todos
+			}
+			this.$emit('safe-list', newList)
 		}
 	}
 }

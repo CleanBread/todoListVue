@@ -1,7 +1,7 @@
 <template>
 	<div class="todo">
-		<input class="todo__completed" type="checkbox" :checked="todo.completed">
-		<input class="todo__text" readonly :value="todo.text">
+		<input class="todo__completed" type="checkbox" :disabled="this.$route.path === '/'" :checked="todo.completed">
+		<input class="todo__text" :readonly="this.$route.path === '/'" :value="todo.text">
 	</div>
 </template>
 
@@ -18,17 +18,17 @@ export default {
 
 <style lang="sass" scoped>
 .todo
-	width: 100%
 	display: flex
 	align-items: center
-	margin-top: 20
+	margin-top: 20px
 	flex-direction: row-reverse
 	border: 1px solid #dfdfdf
-	padding: 20px
+	padding-right: 20px
 	& + &
 		margin-top: -1px
 	&__text
 		font-size: 24px
+		padding: 20px
 		border: none
 		margin-right: 30px
 		width: 100%
