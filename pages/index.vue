@@ -17,7 +17,7 @@ export default {
   data() {
     return {
 			addTodoListSettings: {
-				placeholder: 'Добавить список',
+				placeholder: 'Добавить цель',
 				action: 'add-todo-list'
 			}
     }
