@@ -58,7 +58,7 @@ export default {
 			this.$emit('safe-list')
 		},
 		goPreviewsState() {
-			this.$$emit('go-back')
+			this.$emit('go-back')
 		}
 	}
 }

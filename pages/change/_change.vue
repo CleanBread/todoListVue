@@ -14,7 +14,8 @@ export default {
         return {
             currentList: null,
             todos: [],
-            safed: true
+            safed: true,
+            changed: false
         }
     },
     computed: {
@@ -39,6 +40,7 @@ export default {
             this.$store.dispatch('todoLists/deletePreviewsStates')
             next()
         } else {
+            this.$store.dispatch('todoLists/deletePreviewsStates')
             next()
         }
     },
@@ -53,10 +55,10 @@ export default {
 		},
         safeList() {
             this.safed = true
-            this.$store.dispatch('todoLists/deletePreviewsStates')
         },
         goPreviewsState() {
-            
+            this.$store.dispatch('todoLists/changeTodoList', this.previewsStateList[0])
+            this.$store.dispatch('todoLists/deletePreviewsStates')
         }
     }
 }
