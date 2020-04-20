@@ -1,7 +1,7 @@
 <template>
     <div class="change">
-        <todo-list v-if="currentList" @safe-list="safeList" :data="currentList"></todo-list>
-    </div>
+        <todo-list v-if="currentList" @go-back="goPreviewsState" @safe-list="safeList" @add-todo="addTodo" :data="currentList" :safed="safed" :previewState="previewsStateList"></todo-list>
+    </div>  
 </template>
 
 <script>
@@ -12,23 +12,51 @@ export default {
     },
     data() {
         return {
-            currentList: null
+            currentList: null,
+            todos: [],
+            safed: true
         }
     },
     computed: {
-        getTodoLists() {
-            return this.$store.getters['todoLists/getLists']
+        getTodoList() {
+            return this.$store.getters['todoLists/getLists'].find(item => item.id === +this.$route.params.change)
+        },
+        previewsStateList() {
+            return this.$store.getters['todoLists/getpreviewsStateList']
         }
     },
     mounted() {
         setTimeout(() => {
-            this.currentList = this.getTodoLists.find(item => item.id === +this.$route.params.change)
+            this.currentList = this.getTodoList
         }, 0)
     },
+    beforeRouteLeave(to, from, next) {
+        let len = this.previewsStateList
+        if(!this.safed) {
+            // next(false)
+            // let confirm = confirm('Do you want save changes')
+            this.$store.dispatch('todoLists/changeTodoList', this.previewsStateList[0])
+            this.$store.dispatch('todoLists/deletePreviewsStates')
+            next()
+        } else {
+            next()
+        }
+    },
     methods: {
-        safeList(list) {
-            // console.log(list)
-            this.$store.dispatch('todoLists/safeTodoList', list)
+		addTodo(textTodo) {
+			const newTodo = {
+				text: textTodo,
+				completed: false
+            }
+            this.safed = false
+			this.$store.dispatch('todoLists/addTodoInList', [this.currentList.id, newTodo])
+		},
+        safeList() {
+            this.safed = true
+            this.$store.dispatch('todoLists/deletePreviewsStates')
+        },
+        goPreviewsState() {
+            
         }
     }
 }
