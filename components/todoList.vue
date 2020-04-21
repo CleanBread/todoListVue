@@ -5,7 +5,7 @@
 			<div class="t-list__controls">
 				<nuxt-link v-if="isMainPage" :to="`change/${data.id}`" class="t-list__button button">Изменить</nuxt-link>
 				<button class="t-list__button button button_delete" v-if="isMainPage" @click="deleteTodoList">Удалить</button>
-				<button class="t-list__button button" v-if="!isMainPage && safed && previewState.length" @click="goPreviewsState">go back</button>
+				<button class="t-list__button button" v-if="!isMainPage && safed && previewState.length" @click="goPreviewsState">Отменить изменения</button>
 				<button class="t-list__button button button_safe" v-if="!isMainPage && !safed" @click="safeTodoList">Сохранить</button>
 			</div>
 		</div>
@@ -13,7 +13,7 @@
 			<add-item :settings="addTodoSettings" @add-todo="addTodo"></add-item>
 		</div>
 		<div class="t-list__box">
-			<todo-item v-for="(todo, i) in data.todos" :key="i" :todo="todo"></todo-item>
+			<todo-item @change-todo-text="changeTodoText" @change-comp="changeTodoCompleted" v-for="(todo, i) in data.todos" :key="i" :todo="todo"></todo-item>
 		</div>
 	</div>
 </template>
@@ -59,6 +59,12 @@ export default {
 		},
 		goPreviewsState() {
 			this.$emit('go-back')
+		},
+		changeTodoCompleted(todoId) {
+			this.$emit('change-comp', todoId)
+		},
+		changeTodoText(todoId, text) {
+			this.$emit('change-todo-text', todoId, text)
 		}
 	}
 }

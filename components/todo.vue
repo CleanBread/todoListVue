@@ -1,7 +1,7 @@
 <template>
 	<div class="todo">
-		<input class="todo__completed" type="checkbox" :disabled="this.$route.path === '/'" :checked="todo.completed">
-		<input class="todo__text" :readonly="this.$route.path === '/'" :value="todo.text">
+		<input class="todo__completed" type="checkbox" @change="changeCompleted($event)" :disabled="this.$route.path === '/'" :checked="todo.completed">
+		<input class="todo__text" @change="changeText" :readonly="this.$route.path === '/'" :value="todo.text">
 	</div>
 </template>
 
@@ -11,6 +11,14 @@ export default {
 		todo: {
 			type: Object,
 			required: false
+		}
+	},
+	methods: {
+		changeCompleted() {
+			this.$emit('change-comp', this.todo.id)
+		},
+		changeText(e) {
+			this.$emit('change-todo-text', this.todo.id, e.target.value)
 		}
 	}
 }

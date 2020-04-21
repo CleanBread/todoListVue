@@ -1,6 +1,6 @@
 <template>
     <div class="change">
-        <todo-list v-if="currentList" @go-back="goPreviewsState" @safe-list="safeList" @add-todo="addTodo" :data="currentList" :safed="safed" :previewState="previewsStateList"></todo-list>
+        <todo-list v-if="currentList" @change-todo-text="changeTodoText" @change-comp="changeTodoCompleted" @go-back="goPreviewsState" @safe-list="safeList" @add-todo="addTodo" :data="currentList" :safed="safed" :previewState="previewsStateList"></todo-list>
     </div>  
 </template>
 
@@ -23,7 +23,7 @@ export default {
             return this.$store.getters['todoLists/getLists'].find(item => item.id === +this.$route.params.change)
         },
         previewsStateList() {
-            return this.$store.getters['todoLists/getpreviewsStateList']
+            return this.$store.getters['todoLists/getPreviewsStateList']
         }
     },
     mounted() {
@@ -52,7 +52,13 @@ export default {
             }
             this.safed = false
 			this.$store.dispatch('todoLists/addTodoInList', [this.currentList.id, newTodo])
-		},
+        },
+        changeTodoCompleted(todoId) {
+            this.$store.dispatch('todoLists/changeTodoCompleted', [this.currentList.id, todoId])
+        },
+        changeTodoText(todoId, text) {
+            this.$store.dispatch('todoLists/changeTodoText', [this.currentList.id, todoId, text])
+        },
         safeList() {
             this.safed = true
         },
