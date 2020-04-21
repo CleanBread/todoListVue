@@ -2,7 +2,8 @@
 export const state = () => ({
 	lists: [],
 	id: 0,
-	previewsStateList: []
+	previewsStateList: [],
+	currentList: null
 })
 // mutations
 export const mutations = {
@@ -12,8 +13,8 @@ export const mutations = {
 
 		state.lists.unshift(list)
 	},
-	ADD_TODO_IN_LIST(state, [id, todo]) {
-		let list = state.lists.find(item => item.id === id) 
+	ADD_TODO_IN_LIST(state, todo) {
+		let list = state.currentList 
 
 		state.id++
 		todo.id = state.id
@@ -22,16 +23,16 @@ export const mutations = {
 
 		list.todos.unshift(todo)
 	},
-	CHANGE_TODO_COMPLETED(state, [idList, idTodo]) {
-		let list = state.lists.find(item => item.id === idList),
+	CHANGE_TODO_COMPLETED(state, idTodo) {
+		let list = state.currentList,
 			todo = list.todos.find(item => item.id === idTodo)
 		
 		state.previewsStateList.push(JSON.stringify(list))
 
 		todo.completed = !todo.completed
 	},
-	CHANGE_TODO_TEXT(state, [idList, idTodo, text]) {
-		let list = state.lists.find(item => item.id === idList),
+	CHANGE_TODO_TEXT(state, [idTodo, text]) {
+		let list = state.currentList,
 			todo = list.todos.find(item => item.id === idTodo)
 		
 		state.previewsStateList.push(JSON.stringify(list))
@@ -43,7 +44,7 @@ export const mutations = {
 	},
 	CHANGE_TODO_LIST(state, newList) {
 		let addedList = JSON.parse(newList)
-		let oldList = state.lists.find(item => item.id === addedList.id)
+		let oldList = state.currentList
 		
 		for(let key in oldList) {
 			oldList[key] = addedList[key]
@@ -51,6 +52,9 @@ export const mutations = {
 	},
 	DELETE_PREVIEWS_STATES(state) {
 		state.previewsStateList = []
+	},
+	SET_CURRENT_LIST(state, id) {
+		state.currentList = state.lists.find(item => item.id === id)
 	}
 }
 
@@ -59,8 +63,8 @@ export const actions = {
 	setList({ commit }, list) {
 		commit('SET_LIST', list)
 	},
-	addTodoInList({ commit }, id, todo) {
-		commit('ADD_TODO_IN_LIST', id, todo)
+	addTodoInList({ commit }, todo) {
+		commit('ADD_TODO_IN_LIST', todo)
 	},
 	deleteTodoList({ commit }, id) {
 		commit('DELETE_TODO_LIST', id)
@@ -71,16 +75,20 @@ export const actions = {
 	deletePreviewsStates({commit}) {
 		commit('DELETE_PREVIEWS_STATES')
 	},
-	changeTodoCompleted({commit}, idList, idTodo) {
-		commit('CHANGE_TODO_COMPLETED', idList, idTodo)
+	changeTodoCompleted({commit}, idTodo) {
+		commit('CHANGE_TODO_COMPLETED', idTodo)
 	},
-	changeTodoText({commit}, idList, idTodo, text) {
-		commit('CHANGE_TODO_TEXT', idList, idTodo, text)
+	changeTodoText({commit}, idTodo, text) {
+		commit('CHANGE_TODO_TEXT', idTodo, text)
+	},
+	setCurrentList({commit}, id) {
+		commit('SET_CURRENT_LIST', id)
 	}
 }
 
 // Getters
 export const getters = {
 	getLists: (state) => state.lists,
-	getPreviewsStateList: (state) => state.previewsStateList
+	getPreviewsStateList: (state) => state.previewsStateList,
+	getCurrentList: (state) => state.currentList
 }

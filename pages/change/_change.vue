@@ -12,24 +12,21 @@ export default {
     },
     data() {
         return {
-            currentList: null,
             todos: [],
             safed: true,
             changed: false
         }
     },
     computed: {
-        getTodoList() {
-            return this.$store.getters['todoLists/getLists'].find(item => item.id === +this.$route.params.change)
+        currentList() {
+            return this.$store.getters['todoLists/getCurrentList']
         },
         previewsStateList() {
             return this.$store.getters['todoLists/getPreviewsStateList']
         }
     },
     mounted() {
-        setTimeout(() => {
-            this.currentList = this.getTodoList
-        }, 0)
+        this.$store.dispatch('todoLists/setCurrentList', +this.$route.params.change)
     },
     beforeRouteLeave(to, from, next) {
         let len = this.previewsStateList
@@ -51,13 +48,15 @@ export default {
 				completed: false
             }
             this.safed = false
-			this.$store.dispatch('todoLists/addTodoInList', [this.currentList.id, newTodo])
+			this.$store.dispatch('todoLists/addTodoInList', newTodo)
         },
         changeTodoCompleted(todoId) {
-            this.$store.dispatch('todoLists/changeTodoCompleted', [this.currentList.id, todoId])
+            this.safed = false
+            this.$store.dispatch('todoLists/changeTodoCompleted', todoId)
         },
         changeTodoText(todoId, text) {
-            this.$store.dispatch('todoLists/changeTodoText', [this.currentList.id, todoId, text])
+            this.safed = false
+            this.$store.dispatch('todoLists/changeTodoText', [todoId, text])
         },
         safeList() {
             this.safed = true
