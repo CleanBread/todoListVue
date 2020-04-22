@@ -44,6 +44,8 @@ export default {
 			cursor: default
 		&:focus
 			outline: none
+	&__completed
+		cursor: pointer
 	&__completed:checked + &__text
 		text-decoration: line-through
 </style>

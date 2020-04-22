@@ -23,11 +23,17 @@ export const mutations = {
 
 		list.todos.unshift(todo)
 	},
+	CHANGE_LIST_TEXT(state, text) {
+		let list = state.currentList
+
+		state.previewsStateList.push(JSON.stringify(list))
+
+		list.headline = text
+	},
 	CHANGE_TODO_COMPLETED(state, idTodo) {
 		let list = state.currentList,
 			todo = list.todos.find(item => item.id === idTodo)
 		
-		state.previewsStateList.push(JSON.stringify(list))
 
 		todo.completed = !todo.completed
 	},
@@ -83,6 +89,9 @@ export const actions = {
 	},
 	setCurrentList({commit}, id) {
 		commit('SET_CURRENT_LIST', id)
+	},
+	changeListText({commit}, text) {
+		commit('CHANGE_LIST_TEXT', text)
 	}
 }
 
