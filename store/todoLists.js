@@ -10,6 +10,7 @@ export const mutations = {
 	SET_LIST(state, list) {
 		state.id++
 		list.id = state.id
+		list.safed = true
 
 		state.lists.unshift(list)
 	},
@@ -21,6 +22,7 @@ export const mutations = {
 
 		state.previewsStateList.push(JSON.stringify(list))
 
+		list.safed = false
 		list.todos.unshift(todo)
 	},
 	CHANGE_LIST_TEXT(state, text) {
@@ -28,13 +30,14 @@ export const mutations = {
 
 		state.previewsStateList.push(JSON.stringify(list))
 
+		list.safed = false
 		list.headline = text
 	},
 	CHANGE_TODO_COMPLETED(state, idTodo) {
 		let list = state.currentList,
 			todo = list.todos.find(item => item.id === idTodo)
-		
 
+		list.safed = false
 		todo.completed = !todo.completed
 	},
 	CHANGE_TODO_TEXT(state, [idTodo, text]) {
@@ -43,6 +46,7 @@ export const mutations = {
 		
 		state.previewsStateList.push(JSON.stringify(list))
 
+		list.safed = false
 		todo.text = text
 	},
 	DELETE_TODO_LIST(state, id) {
@@ -61,6 +65,9 @@ export const mutations = {
 	},
 	SET_CURRENT_LIST(state, id) {
 		state.currentList = state.lists.find(item => item.id === id)
+	},
+	SAFE_CURRENT_LIST(state) {
+		state.currentList.safed = true
 	}
 }
 
@@ -92,6 +99,9 @@ export const actions = {
 	},
 	changeListText({commit}, text) {
 		commit('CHANGE_LIST_TEXT', text)
+	},
+	safeCurrentList({commit}) {
+		commit('SAFE_CURRENT_LIST')
 	}
 }
 

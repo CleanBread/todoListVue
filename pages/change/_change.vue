@@ -26,34 +26,15 @@ export default {
         }
     },
     mounted() {
-        this.$store.dispatch('todoLists/setCurrentList', +this.$route.params.change)
+        if(!this.currentList) {
+            this.$store.dispatch('todoLists/setCurrentList', +this.$route.params.change)
+        }
     },
     beforeRouteLeave(to, from, next) {
-        let self = this
 
-        if(!this.safed) {
+        if(!this.currentList.safed) {
             next(false)
-            
-            this.$vueConfirm.confirm(
-                {
-                    auth: false,
-                    message: `Сохранить Ваши изменения?`,
-                    button: {
-                        no: 'Нет',
-                        yes: 'Да'
-                    }
-                },
-                function(confirm) {
-                    if (confirm == true) {
-                        self.safeList()
-                    } else {
-                        self.$store.dispatch('todoLists/changeTodoList', self.previewsStateList[0])
-                    }
-                    self.$store.dispatch('todoLists/deletePreviewsStates')
-                    next()
-                }
-            )
-            // next()
+            this.dialog(next)
         } else {
             this.$store.dispatch('todoLists/deletePreviewsStates')
             next()
@@ -65,27 +46,47 @@ export default {
 				text: textTodo,
 				completed: false
             }
-            this.safed = false
 			this.$store.dispatch('todoLists/addTodoInList', newTodo)
         },
         changeTodoCompleted(todoId) {
-            this.safed = false
             this.$store.dispatch('todoLists/changeTodoCompleted', todoId)
         },
         changeTodoText(todoId, text) {
-            this.safed = false
             this.$store.dispatch('todoLists/changeTodoText', [todoId, text])
         },
         changeListText(text) {
-            this.safed = false
             this.$store.dispatch('todoLists/changeListText', text)
         },
         safeList() {
-            this.safed = true
+            this.$store.dispatch('todoLists/safeCurrentList')
         },
         goPreviewsState() {
             this.$store.dispatch('todoLists/changeTodoList', this.previewsStateList[0])
             this.$store.dispatch('todoLists/deletePreviewsStates')
+        },
+        dialog(next) {
+            let self = this
+            this.$vueConfirm.confirm(
+                {
+                    auth: false,
+                    message: `Сохранить Ваши изменения?`,
+                    button: {
+                        yes: 'Да',
+                        no: 'Нет'
+                    }
+                },
+                function(confirm) {
+                    if (confirm == true) {
+                        self.$store.dispatch('todoLists/safeCurrentList')
+                    } else {
+                        self.$store.dispatch('todoLists/changeTodoList', self.previewsStateList[0])
+                    }
+                    self.$store.dispatch('todoLists/deletePreviewsStates')
+                    if(next) {
+                        next()
+                    }
+                }
+            )
         }
     }
 }
